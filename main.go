@@ -2,7 +2,6 @@ package main
 
 import (
     _ "embed"
-    // "encoding/json"
     "context"
     "flag"
     "fmt"
@@ -33,19 +32,16 @@ func post() {
 
     body, idx := getBody()
 
-    _ = body
-    fmt.Printf("body: %s\n", reqs[idx])
+    fmt.Printf("[INFO] post body: %s\n", reqs[idx])
 
     // no client side timeout set since this cli coded to work with local deployment microservice.
-    // res, err := http.Post(localURL, content, body)
-    // if err == nil {
-        // fmt.Printf("local post request to %s error. content: %s body: %s", localURL, content, reqs[idx])
-    // }
+    res, err := http.Post(localURL, content, body)
+    if err != nil {
+        fmt.Printf("[ERROR] local post request to %s error. content: %s body: %s\n", localURL, content, reqs[idx])
+        return
+    }
 
-    // defer res.Body.Close()
-
-    // fmt.Printf("response body: %s\n", res.Body)
-
+    defer res.Body.Close()
 }
 
 func runner(ctx context.Context, limiter *rate.Limiter) <- chan struct{} {
@@ -70,7 +66,6 @@ func runner(ctx context.Context, limiter *rate.Limiter) <- chan struct{} {
 
 func main() {
 
-    _ = http.Post
     // parse argument
     testMins := flag.Int("minute", 1, "test period (in minutes)")
     testQPS := flag.Int("qps", 100, "QPS")
